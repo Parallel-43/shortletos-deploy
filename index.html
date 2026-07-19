@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShortletOS — Dubai Holiday Home Compliance Checker</title>
+<meta name="description" content="Free tool for Dubai short-term rental operators: check your DET Holiday Homes compliance and calculate your monthly Tourism Dirham remittance. No signup required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo:ital,wght@0,800;0,900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F4EC;
+    --ink:#16281F;
+    --green:#0E5C3F;
+    --brass:#B98A2F;
+    --red:#B3402A;
+    --hairline:#D8D2C4;
+    --paper-2:#FBFAF4;
+    --ink-60:rgba(22,40,31,.62);
+    --ink-40:rgba(22,40,31,.42);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .num{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+  h1,h2,h3,.display{
+    font-family:'Archivo',sans-serif;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.01em;
+    line-height:1.02;
+    font-stretch:expanded;
+    margin:0;
+  }
+  a{color:var(--green);text-underline-offset:2px}
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px}
+  .rule{border:0;border-top:1px solid var(--hairline);margin:0}
+
+  /* ---- top meta bar ---- */
+  .meta-bar{
+    border-bottom:1px solid var(--hairline);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-60);
+  }
+  .meta-bar .wrap{display:flex;justify-content:space-between;gap:12px;padding-top:9px;padding-bottom:9px;flex-wrap:wrap}
+  .meta-bar b{color:var(--ink);font-weight:600}
+
+  /* ---- hero ---- */
+  header.hero{padding:52px 0 40px;border-bottom:1px solid var(--hairline)}
+  .kicker{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--green);margin:0 0 16px;font-weight:500;
+  }
+  h1{font-size:clamp(30px,6vw,54px)}
+  h1 .u{color:var(--green)}
+  .lede{max-width:60ch;margin:20px 0 0;font-size:clamp(16px,2.1vw,18px);color:var(--ink)}
+  .lede-sub{max-width:62ch;margin:10px 0 0;font-size:14.5px;color:var(--ink-60)}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+
+  /* ---- buttons ---- */
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;
+    letter-spacing:.04em;text-transform:uppercase;
+    padding:13px 20px;border:1.5px solid var(--ink);border-radius:2px;
+    background:var(--ink);color:var(--paper);cursor:pointer;text-decoration:none;
+    transition:background .15s ease,color .15s ease,transform .05s ease;
+  }
+  .btn:hover{background:var(--green);border-color:var(--green)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink);color:var(--paper)}
+  .btn.green{background:var(--green);border-color:var(--green)}
+  .btn.green:hover{background:var(--ink);border-color:var(--ink)}
+
+  /* ---- section framing ---- */
+  section{padding:48px 0;border-bottom:1px solid var(--hairline)}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+  .sec-no{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;
+    letter-spacing:.1em;color:var(--brass);text-transform:uppercase;
+    border:1px solid var(--hairline);padding:3px 8px;border-radius:2px;
+  }
+  h2{font-size:clamp(22px,3.6vw,30px)}
+  .sec-intro{color:var(--ink-60);max-width:64ch;margin:14px 0 30px;font-size:15px}
+
+  /* ---- form-like question rows ---- */
+  .qlist{display:flex;flex-direction:column;gap:0;border:1px solid var(--hairline);border-radius:3px;background:var(--paper-2);overflow:hidden}
+  .qrow{padding:18px 20px;border-bottom:1px solid var(--hairline);display:grid;grid-template-columns:1fr auto;gap:16px 24px;align-items:start}
+  .qrow:last-child{border-bottom:0}
+  .qrow.is-inactive{opacity:.5}
+  .q-label{display:flex;gap:12px;align-items:flex-start}
+  .q-idx{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-40);padding-top:2px;min-width:20px}
+  .q-text{font-size:15px;line-height:1.45}
+  .q-rule{display:block;margin-top:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.03em;color:var(--ink-40);text-transform:uppercase}
+  .toggle{display:inline-flex;border:1.5px solid var(--hairline);border-radius:2px;overflow:hidden;flex-shrink:0;background:var(--paper)}
+  .toggle label{position:relative;cursor:pointer}
+  .toggle input{position:absolute;opacity:0;width:1px;height:1px}
+  .toggle span{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;
+    letter-spacing:.06em;text-transform:uppercase;padding:9px 15px;color:var(--ink-60);
+    transition:background .12s,color .12s;
+  }
+  .toggle label + label span{border-left:1.5px solid var(--hairline)}
+  .toggle input:checked + span{background:var(--ink);color:var(--paper)}
+  .toggle input.yes:checked + span{background:var(--green);color:var(--paper)}
+  .toggle input.no:checked + span{background:var(--red);color:var(--paper)}
+  .toggle input:focus-visible + span{outline:2px solid var(--brass);outline-offset:2px}
+
+  .turnover-row{
+    margin:0 0 22px;padding:16px 18px;border:1px dashed var(--hairline);border-radius:3px;
+    display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;background:var(--paper-2);
+  }
+  .turnover-row .q-text{font-size:14.5px;max-width:52ch}
+
+  .field{display:flex;flex-direction:column;gap:7px}
+  .field label{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-60)}
+  input[type="number"],input[type="email"],select{
+    font-family:'IBM Plex Mono',monospace;font-size:15px;
+    background:var(--paper-2);border:1.5px solid var(--hairline);border-radius:2px;
+    padding:11px 13px;color:var(--ink);width:100%;
+  }
+  input[type="number"]:focus,input[type="email"]:focus,select:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--green)}
+  .calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:8px}
+
+  /* ---- SLIP (signature element) ---- */
+  .slip{
+    position:relative;background:var(--paper-2);border:1.5px solid var(--ink);border-radius:3px;
+    padding:26px 26px 22px;margin-top:28px;
+    box-shadow:3px 4px 0 rgba(22,40,31,.08);
+    overflow:hidden;
+  }
+  .slip::before{
+    content:"";position:absolute;inset:6px;border:1px solid var(--hairline);border-radius:2px;pointer-events:none;
+  }
+  .slip-inner{position:relative}
+  .slip-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:1px solid var(--hairline);padding-bottom:14px;margin-bottom:16px;flex-wrap:wrap}
+  .slip-title{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-stretch:expanded;font-size:15px;letter-spacing:.02em}
+  .slip-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-60);margin-top:5px}
+  .slip-ref{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-40);text-align:right;letter-spacing:.05em}
+
+  .slip-rows{display:flex;flex-direction:column;gap:0}
+  .slip-line{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px dotted var(--hairline);font-size:13.5px}
+  .slip-line:last-child{border-bottom:0}
+  .slip-line .k{color:var(--ink-60);font-size:13px}
+  .slip-line .v{font-family:'IBM Plex Mono',monospace;font-weight:500;text-align:right}
+  .slip-line .v.ok{color:var(--green)}
+  .slip-line .v.bad{color:var(--red)}
+
+  .slip-total{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-top:18px;padding-top:16px;border-top:2px solid var(--ink)}
+  .slip-total .k{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-60)}
+  .slip-total .amt{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:34px;line-height:1;color:var(--green)}
+  .slip-total .amt .cur{font-size:16px;color:var(--ink-60);margin-right:6px;vertical-align:6px}
+
+  .slip-dates{display:flex;gap:0;margin-top:18px;border:1px solid var(--hairline);border-radius:2px;overflow:hidden}
+  .slip-dates div{flex:1;padding:12px 14px;border-right:1px solid var(--hairline)}
+  .slip-dates div:last-child{border-right:0}
+  .slip-dates .dk{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-40)}
+  .slip-dates .dv{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;margin-top:4px}
+  .slip-dates .dv.due{color:var(--red)}
+
+  /* STAMP */
+  .stamp{
+    position:absolute;top:20px;right:20px;transform:rotate(-9deg);
+    border:3px double currentColor;border-radius:4px;
+    padding:8px 14px 7px;font-family:'Archivo',sans-serif;font-weight:900;
+    text-transform:uppercase;font-stretch:expanded;letter-spacing:.04em;font-size:19px;
+    opacity:.9;pointer-events:none;line-height:1;
+  }
+  .stamp small{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:500;letter-spacing:.12em;margin-top:4px;text-align:center;opacity:.85}
+  .stamp.ok{color:var(--green)}
+  .stamp.warn{color:var(--brass)}
+  .stamp.bad{color:var(--red)}
+  @media (prefers-reduced-motion:no-preference){
+    .stamp{animation:stampin .28s cubic-bezier(.2,1.4,.4,1) both}
+    @keyframes stampin{0%{transform:rotate(-9deg) scale(1.5);opacity:0}60%{opacity:1}100%{transform:rotate(-9deg) scale(1);opacity:.9}}
+    .slip{animation:slipin .3s ease both}
+    @keyframes slipin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+
+  .verdict-note{margin-top:16px;font-size:14px;color:var(--ink);line-height:1.5}
+  .fail-list{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:10px}
+  .fail-list li{display:flex;gap:11px;font-size:13.5px;line-height:1.45;padding:12px 14px;border-left:3px solid var(--red);background:rgba(179,64,42,.05);border-radius:0 2px 2px 0}
+  .fail-list li .flag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--red);white-space:nowrap;padding-top:2px}
+  .pass-line{margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--green);letter-spacing:.03em}
+
+  .helper{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-40);margin-top:14px;line-height:1.5}
+  .bonus{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+  .bonus div{border:1px solid var(--hairline);border-radius:3px;padding:14px 16px;background:var(--paper-2)}
+  .bonus .bk{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-60)}
+  .bonus .bv{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600;margin-top:6px;color:var(--ink)}
+  .bonus .bn{font-size:12px;color:var(--ink-40);margin-top:5px;line-height:1.4}
+
+  /* ---- lead form ---- */
+  .lead{background:var(--ink);color:var(--paper);border-radius:4px;padding:38px 32px;margin-top:8px}
+  .lead h2{color:var(--paper)}
+  .lead .sec-intro{color:rgba(247,244,236,.72)}
+  .lead .sec-no{color:var(--brass);border-color:rgba(247,244,236,.25)}
+  .lead form{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap;max-width:560px}
+  .lead input[type="email"]{flex:1;min-width:220px;background:rgba(247,244,236,.06);border-color:rgba(247,244,236,.28);color:var(--paper)}
+  .lead input[type="email"]::placeholder{color:rgba(247,244,236,.45)}
+  .lead input[type="email"]:focus{border-color:var(--brass);outline-color:var(--brass)}
+  .lead .hp{position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden}
+  .lead-fine{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(247,244,236,.5);margin-top:16px;letter-spacing:.03em}
+  .lead-success{
+    display:none;margin-top:22px;border:1.5px solid var(--brass);border-radius:3px;padding:22px 24px;
+    background:rgba(185,138,47,.1);
+  }
+  .lead-success.show{display:block}
+  .lead-success .st{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-stretch:expanded;font-size:16px;letter-spacing:.02em;color:var(--paper)}
+  .lead-success .sm{margin-top:8px;font-size:14px;color:rgba(247,244,236,.8)}
+  .lead-err{display:none;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E8A38F}
+  .lead-err.show{display:block}
+
+  /* ---- brand / footer ---- */
+  .brand-block{padding:44px 0}
+  .brand-block .display{font-size:clamp(20px,3vw,26px)}
+  .brand-tag{color:var(--ink-60);margin-top:12px;max-width:60ch;font-size:15px}
+  .brand-eu{margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.03em;color:var(--brass)}
+  footer{padding:34px 0 60px;border-top:1px solid var(--hairline)}
+  .disclaimer{font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.6;color:var(--ink-40);max-width:74ch;letter-spacing:.01em}
+  .foot-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:20px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-60)}
+
+  :focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+  @media (max-width:640px){
+    .qrow{grid-template-columns:1fr;gap:12px}
+    .qrow .toggle{justify-self:start}
+    .calc-grid{grid-template-columns:1fr}
+    .bonus{grid-template-columns:1fr}
+    .slip{padding:22px 18px 18px}
+    .stamp{font-size:16px;top:14px;right:14px}
+    .slip-total .amt{font-size:28px}
+    header.hero{padding:38px 0 32px}
+  }
+</style>
+</head>
+<body>
+
+<div class="meta-bar">
+  <div class="wrap">
+    <span>Dubai · DET Holiday Homes</span>
+    <span>Rates current as of <b>2026</b></span>
+    <span>Free tool · No signup</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">ShortletOS · Compliance Instrument 01</p>
+    <h1>Dubai Holiday Home<br><span class="u">Compliance Checker</span></h1>
+    <p class="lede">Check your unit against the DET Holiday Homes rulebook and calculate your monthly Tourism Dirham remittance — before an inspector, or a delisting notice, does it for you.</p>
+    <p class="lede-sub">Two instruments below. Both run entirely in your browser. Nothing is submitted unless you ask for the guide at the end.</p>
+    <div class="hero-actions">
+      <a class="btn green" href="#checker">Run compliance check</a>
+      <a class="btn ghost" href="#calculator">Calculate Tourism Dirham</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ FEATURE 1 : COMPLIANCE CHECKER ============ -->
+<section id="checker">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">Instrument 01</span>
+      <h2>Compliance Checker</h2>
+    </div>
+    <p class="sec-intro">Answer eight questions the way your operation actually runs today — not the way it should. The verdict is issued as a permit slip below. Every failed check carries a delisting-risk consequence.</p>
+
+    <div class="turnover-row">
+      <span class="q-text"><strong>Does this unit's annual taxable turnover exceed AED 375,000?</strong><br><span class="q-rule">Sets whether the VAT question (08) counts toward your verdict. Voluntary threshold AED 187,500.</span></span>
+      <div class="toggle" role="radiogroup" aria-label="Annual taxable turnover above AED 375,000">
+        <label><input type="radio" name="turnover" class="yes" value="yes"><span>Above</span></label>
+        <label><input type="radio" name="turnover" class="no" value="no" checked><span>Below</span></label>
+      </div>
+    </div>
+
+    <div class="qlist" id="qlist"></div>
+
+    <div style="margin-top:22px;display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn green" id="runCheck" type="button">Issue verdict slip</button>
+      <button class="btn ghost" id="resetCheck" type="button">Reset</button>
+    </div>
+
+    <div id="verdictOut" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ============ FEATURE 2 : TOURISM DIRHAM CALCULATOR ============ -->
+<section id="calculator">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-no">Instrument 02</span>
+      <h2>Tourism Dirham Calculator</h2>
+    </div>
+    <p class="sec-intro">Tourism Dirham is charged per occupied bedroom, per night: AED 10 for a Standard unit, AED 15 for a Deluxe unit. It is collected from the guest and remitted to DET — it is not VAT.</p>
+
+    <div class="calc-grid">
+      <div class="field">
+        <label for="bedrooms">Bedrooms</label>
+        <input type="number" id="bedrooms" min="0" max="20" step="1" value="2" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="classification">Classification</label>
+        <select id="classification">
+          <option value="10">Standard — AED 10 / bedroom / night</option>
+          <option value="15" selected>Deluxe — AED 15 / bedroom / night</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="nights">Occupied nights this month</label>
+        <input type="number" id="nights" min="0" max="31" step="1" value="20" inputmode="numeric">
+      </div>
+    </div>
+    <p class="helper">Note: for a single stay longer than 30 consecutive nights, Tourism Dirham applies to the first 30 nights of that stay only. Enter the nights that were actually charged.</p>
+
+    <div id="remitSlip"></div>
+
+    <div class="bonus">
+      <div>
+        <div class="bk">One-time DET registration</div>
+        <div class="bv num">~AED 1,520</div>
+        <div class="bn">Paid once when you first register the unit.</div>
+      </div>
+      <div>
+        <div class="bk">Annual permit fee</div>
+        <div class="bv num" id="permitFee">~AED 370 / bedroom</div>
+        <div class="bn">~AED 370 per bedroom per year, capped at ~AED 1,270.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURE 3 : LEAD CAPTURE ============ -->
+<section id="guide" style="border-bottom:0">
+  <div class="wrap">
+    <div class="lead">
+      <div class="sec-head">
+        <span class="sec-no">Instrument 03</span>
+        <h2>Get the full Dubai STR compliance guide</h2>
+      </div>
+      <p class="sec-intro">The complete DET Holiday Homes operator guide — permit steps, classification criteria, the check-in system, Tourism Dirham workflow, safety kit and 2025 sustainability requirements — plus early access to ShortletOS. One email. No spam.</p>
+
+      <form name="str-guide" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="leadForm">
+        <input type="hidden" name="form-name" value="str-guide">
+        <p class="hp" aria-hidden="true">
+          <label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+        </p>
+        <input type="email" name="email" id="leadEmail" placeholder="operator@yourcompany.ae" required aria-label="Your email address">
+        <button class="btn green" type="submit">Send me the guide</button>
+        <p class="lead-err" id="leadErr">Something went wrong sending that. Please try again.</p>
+        <p class="lead-fine">We'll send the guide and occasional ShortletOS updates. Unsubscribe anytime.</p>
+      </form>
+
+      <div class="lead-success" id="leadSuccess" aria-live="polite">
+        <div class="st">Request received ✓</div>
+        <div class="sm">Check your inbox — the compliance guide is on its way, and you're on the early-access list for ShortletOS.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRAND / FOOTER ============ -->
+<div class="brand-block">
+  <div class="wrap">
+    <p class="display">ShortletOS</p>
+    <p class="brand-tag">Compliance-native short-let management — the permit, the guest check-ins, Tourism Dirham, and the paperwork, run as one system instead of eight browser tabs.</p>
+    <p class="brand-eu">EU coverage (Regulation 2024/1028) coming next.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p class="disclaimer">
+      This is an informational tool, not legal or tax advice. Rates and rules shown are per Dubai's Department of Economy and Tourism (DET) Holiday Homes framework as understood in 2026 and may change. Tourism Dirham is collected for DET and is separate from VAT, which is administered by the Federal Tax Authority (FTA). Always verify current permit requirements, fees and thresholds on the official DET Holiday Homes portal and with a qualified adviser before acting.
+    </p>
+    <div class="foot-meta">
+      <span>ShortletOS — Compliance instrument</span>
+      <span>Not affiliated with DET</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- FEATURE 1 : CHECKER ----------
+  // severity: "critical" => failing pushes verdict to EXPOSED (delisting).
+  //           "standard" => failing pushes verdict to AT RISK.
+  var QUESTIONS = [
+    { id:"permit", severity:"critical", rule:"DET permit — one per unit",
+      text:"Do you hold a valid DET Holiday Home permit for this unit?",
+      fail:"No valid permit means the listing is unlicensed. DET removes unlicensed listings and fines start around AED 5,000, escalating for repeat offenders." },
+    { id:"display", severity:"standard", rule:"Permit + QR display",
+      text:"Is your permit number shown on the listing AND the printed permit QR displayed in the property, near the DEWA plate?",
+      fail:"Missing permit/QR display is a common inspection failure and a delisting trigger even when the permit itself is valid." },
+    { id:"classified", severity:"standard", rule:"Standard / Deluxe classification",
+      text:"Have you classified the unit as Standard or Deluxe?",
+      fail:"An unclassified unit cannot be correctly permitted or charged the right Tourism Dirham rate." },
+    { id:"checkin", severity:"critical", rule:"Guest registration before check-in",
+      text:"Do you register every guest in the DET Holiday Homes check-in system BEFORE they check in?",
+      fail:"Failing to register guests before check-in breaches the operating conditions of the permit and is grounds for penalties and delisting." },
+    { id:"dirham", severity:"standard", rule:"Tourism Dirham remitted monthly",
+      text:"Do you collect Tourism Dirham and remit it monthly by the 15th?",
+      fail:"Unremitted Tourism Dirham accrues arrears with DET. Payment orders auto-generate on the 11th and are due by the 15th." },
+    { id:"wholeunit", severity:"critical", rule:"Whole-unit lets only",
+      text:"Do you rent the whole unit only (no room-only lets)?",
+      fail:"Room-only lets are prohibited under the Holiday Homes framework — an immediate delisting risk." },
+    { id:"safety", severity:"standard", rule:"DET Sustainability Requirements 2025",
+      text:"Is your safety kit serviced and aligned with the DET Sustainability Requirements 2025?",
+      fail:"An unserviced or non-compliant safety kit fails inspection and can suspend the permit." },
+    { id:"vat", severity:"standard", rule:"FTA VAT registration", conditional:"turnover",
+      text:"Are you VAT-registered with the FTA for this business?",
+      fail:"Above AED 375,000 taxable turnover, VAT registration with the FTA is mandatory. (Tourism Dirham is separate and goes to DET, not the FTA.)" }
+  ];
+
+  var qlist = document.getElementById("qlist");
+  QUESTIONS.forEach(function(q, i){
+    var idx = String(i+1).padStart(2,"0");
+    var row = document.createElement("div");
+    row.className = "qrow";
+    row.dataset.qid = q.id;
+    row.innerHTML =
+      '<div class="q-label">'+
+        '<span class="q-idx num">'+idx+'</span>'+
+        '<span class="q-text">'+q.text+'<span class="q-rule">Rule · '+q.rule+'</span></span>'+
+      '</div>'+
+      '<div class="toggle" role="radiogroup" aria-label="'+q.text.replace(/"/g,"&quot;")+'">'+
+        '<label><input type="radio" name="q_'+q.id+'" class="yes" value="yes"><span>Yes</span></label>'+
+        '<label><input type="radio" name="q_'+q.id+'" class="no" value="no"><span>No</span></label>'+
+      '</div>';
+    qlist.appendChild(row);
+  });
+
+  function turnoverAbove(){
+    var el = document.querySelector('input[name="turnover"]:checked');
+    return el && el.value === "yes";
+  }
+
+  function syncVatRow(){
+    var row = document.querySelector('.qrow[data-qid="vat"]');
+    if(!row) return;
+    var active = turnoverAbove();
+    row.classList.toggle("is-inactive", !active);
+    var rule = row.querySelector(".q-rule");
+    rule.textContent = active
+      ? "Rule · FTA VAT registration (counts — turnover is above AED 375,000)"
+      : "Rule · FTA VAT registration (not counted — turnover below AED 375,000)";
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="turnover"]'), function(el){
+    el.addEventListener("change", syncVatRow);
+  });
+  syncVatRow();
+
+  function currentDateParts(){
+    var now = new Date();
+    return { y:now.getFullYear(), m:now.getMonth(), d:now.getDate() };
+  }
+
+  function refNumber(prefix){
+    var p = currentDateParts();
+    var mm = String(p.m+1).padStart(2,"0");
+    // deterministic-ish ref from the date, no PII
+    var seq = String((p.y*372 + (p.m+1)*31 + p.d) % 9000 + 1000);
+    return prefix+"-"+p.y+mm+"-"+seq;
+  }
+
+  document.getElementById("runCheck").addEventListener("click", function(){
+    var answered = 0, failures = [], criticalFail = false, standardFail = false;
+    QUESTIONS.forEach(function(q){
+      if(q.conditional === "turnover" && !turnoverAbove()) return; // skip VAT below threshold
+      var sel = document.querySelector('input[name="q_'+q.id+'"]:checked');
+      if(!sel){ return; }
+      answered++;
+      if(sel.value === "no"){
+        failures.push(q);
+        if(q.severity === "critical") criticalFail = true; else standardFail = true;
+      }
+    });
+
+    var applicable = QUESTIONS.filter(function(q){
+      return !(q.conditional === "turnover" && !turnoverAbove());
+    }).length;
+
+    var out = document.getElementById("verdictOut");
+
+    if(answered < applicable){
+      out.innerHTML = '<div class="verdict-note" style="color:var(--red);font-family:\'IBM Plex Mono\',monospace;font-size:13px;margin-top:22px">'+
+        'Answer all '+applicable+' applicable questions to issue a verdict ('+answered+' of '+applicable+' answered).</div>';
+      return;
+    }
+
+    var tier, stampClass, stampText, headline;
+    if(criticalFail){
+      tier="EXPOSED"; stampClass="bad"; stampText="EXPOSED";
+      headline="One or more mandatory rules are not met. This unit is at direct risk of delisting and fines.";
+    } else if(standardFail){
+      tier="AT RISK"; stampClass="warn"; stampText="AT RISK";
+      headline="No mandatory breach, but open compliance gaps remain. Left unresolved, these escalate into delisting risk.";
+    } else {
+      tier="COMPLIANT"; stampClass="ok"; stampText="COMPLIANT";
+      headline="Every applicable rule is met on today's answers. Keep your permit, QR, registrations and remittances current to stay here.";
+    }
+
+    var rowsHtml = QUESTIONS.map(function(q){
+      var skipped = (q.conditional === "turnover" && !turnoverAbove());
+      var sel = document.querySelector('input[name="q_'+q.id+'"]:checked');
+      var val, cls;
+      if(skipped){ val="N/A"; cls=""; }
+      else if(sel && sel.value==="yes"){ val="PASS"; cls="ok"; }
+      else { val="FAIL"; cls="bad"; }
+      return '<div class="slip-line"><span class="k">'+q.rule+'</span><span class="v '+cls+'">'+val+'</span></div>';
+    }).join("");
+
+    var failHtml = "";
+    if(failures.length){
+      failHtml = '<ul class="fail-list">'+ failures.map(function(q){
+        return '<li><span class="flag">Delisting risk</span><span>'+q.fail+'</span></li>';
+      }).join("") + '</ul>';
+    } else {
+      failHtml = '<p class="pass-line">✓ No delisting-risk flags on this check.</p>';
+    }
+
+    var ref = refNumber("HH");
+    var dstr = new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+
+    out.innerHTML =
+      '<div class="slip" role="group" aria-label="Compliance verdict slip">'+
+        '<div class="stamp '+stampClass+'">'+stampText+'<small>DET Holiday Homes</small></div>'+
+        '<div class="slip-inner">'+
+          '<div class="slip-head">'+
+            '<div><div class="slip-title">Compliance Verdict Slip</div>'+
+            '<div class="slip-sub">Self-assessment · DET Holiday Homes</div></div>'+
+            '<div class="slip-ref">Ref '+ref+'<br>Issued '+dstr+'</div>'+
+          '</div>'+
+          '<div class="slip-rows">'+rowsHtml+'</div>'+
+          '<div class="slip-total"><span class="k">Verdict</span>'+
+            '<span class="amt" style="color:'+(tier==="COMPLIANT"?"var(--green)":tier==="AT RISK"?"var(--brass)":"var(--red)")+'">'+tier+'</span></div>'+
+          '<p class="verdict-note">'+headline+'</p>'+
+          failHtml+
+        '</div>'+
+      '</div>';
+    out.querySelector(".slip").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto":"smooth", block:"nearest"});
+  });
+
+  document.getElementById("resetCheck").addEventListener("click", function(){
+    Array.prototype.forEach.call(document.querySelectorAll('#qlist input[type="radio"]'), function(el){ el.checked=false; });
+    document.getElementById("verdictOut").innerHTML="";
+  });
+
+  // ---------- FEATURE 2 : CALCULATOR ----------
+  var bedroomsEl = document.getElementById("bedrooms");
+  var classEl = document.getElementById("classification");
+  var nightsEl = document.getElementById("nights");
+  var slipEl = document.getElementById("remitSlip");
+  var permitFeeEl = document.getElementById("permitFee");
+
+  function fmt(n){ return n.toLocaleString("en-US"); }
+
+  function monthDates(){
+    var now = new Date();
+    var y = now.getFullYear(), m = now.getMonth();
+    // if we're already past the 15th, the actionable cycle is next month
+    var cycle = (now.getDate() > 15) ? new Date(y, m+1, 1) : new Date(y, m, 1);
+    var cy = cycle.getFullYear(), cm = cycle.getMonth();
+    var gen = new Date(cy, cm, 11);
+    var due = new Date(cy, cm, 15);
+    var opt = {day:"2-digit",month:"short",year:"numeric"};
+    return {
+      period: cycle.toLocaleDateString("en-GB",{month:"long",year:"numeric"}),
+      gen: gen.toLocaleDateString("en-GB",opt),
+      due: due.toLocaleDateString("en-GB",opt)
+    };
+  }
+
+  function calc(){
+    var beds = Math.max(0, Math.floor(Number(bedroomsEl.value)||0));
+    var rate = Number(classEl.value)||0;
+    var nights = Math.max(0, Math.floor(Number(nightsEl.value)||0));
+    var total = beds * rate * nights;
+    var className = rate===15 ? "Deluxe" : "Standard";
+
+    // annual permit fee: ~AED 370/bedroom, capped ~AED 1,270
+    var permit = Math.min(370*beds, 1270);
+    permitFeeEl.textContent = "~AED "+fmt(permit);
+
+    var d = monthDates();
+    slipEl.innerHTML =
+      '<div class="slip" role="group" aria-label="Monthly remittance slip">'+
+        '<div class="stamp warn" style="color:var(--green)">DIRHAM<small>Tourism · DET</small></div>'+
+        '<div class="slip-inner">'+
+          '<div class="slip-head">'+
+            '<div><div class="slip-title">Monthly Remittance Slip</div>'+
+            '<div class="slip-sub">Tourism Dirham · '+d.period+'</div></div>'+
+            '<div class="slip-ref">Ref '+refNumber("TD")+'</div>'+
+          '</div>'+
+          '<div class="slip-rows">'+
+            '<div class="slip-line"><span class="k">Classification</span><span class="v">'+className+'</span></div>'+
+            '<div class="slip-line"><span class="k">Rate per bedroom / night</span><span class="v">AED '+rate+'</span></div>'+
+            '<div class="slip-line"><span class="k">Bedrooms</span><span class="v">'+beds+'</span></div>'+
+            '<div class="slip-line"><span class="k">Occupied nights</span><span class="v">'+nights+'</span></div>'+
+            '<div class="slip-line"><span class="k">AED '+rate+' × '+beds+' bdrm × '+nights+' nights</span><span class="v">AED '+fmt(total)+'</span></div>'+
+          '</div>'+
+          '<div class="slip-total"><span class="k">Due to DET</span>'+
+            '<span class="amt"><span class="cur">AED</span>'+fmt(total)+'</span></div>'+
+          '<div class="slip-dates">'+
+            '<div><div class="dk">Payment order generates</div><div class="dv">'+d.gen+'</div></div>'+
+            '<div><div class="dk">Remittance due</div><div class="dv due">'+d.due+'</div></div>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+  }
+  [bedroomsEl, classEl, nightsEl].forEach(function(el){
+    el.addEventListener("input", calc);
+    el.addEventListener("change", calc);
+  });
+  calc();
+
+  // ---------- FEATURE 3 : LEAD FORM (AJAX, inline success) ----------
+  var form = document.getElementById("leadForm");
+  var successBox = document.getElementById("leadSuccess");
+  var errBox = document.getElementById("leadErr");
+
+  function encode(data){
+    return Object.keys(data).map(function(k){
+      return encodeURIComponent(k)+"="+encodeURIComponent(data[k]);
+    }).join("&");
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    errBox.classList.remove("show");
+    var email = document.getElementById("leadEmail").value.trim();
+    var honey = form.querySelector('[name="bot-field"]').value;
+    if(honey){ // bot filled the trap — silently show success, submit nothing
+      form.style.display="none"; successBox.classList.add("show"); return;
+    }
+    var body = encode({ "form-name":"str-guide", "email":email, "bot-field":"" });
+    fetch("/", {
+      method:"POST",
+      headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+      body: body
+    }).then(function(res){
+      if(!res.ok) throw new Error("bad status "+res.status);
+      form.style.display="none";
+      successBox.classList.add("show");
+      successBox.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth", block:"nearest"});
+    }).catch(function(){
+      errBox.classList.add("show");
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
